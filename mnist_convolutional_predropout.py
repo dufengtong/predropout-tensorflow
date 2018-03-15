@@ -16,18 +16,28 @@
 import tensorflow as tf
 import tensorflowvisu
 import math
+<<<<<<< HEAD
 import pickle
 from generate_noise_mnist import read_h5_data
 
 
+=======
+from tensorflow.examples.tutorials.mnist import input_data as mnist_data
+import pickle
+from tensorflow.python import debug as tf_debug
+>>>>>>> refs/remotes/origin/master
 print("Tensorflow version " + tf.__version__)
 tf.set_random_seed(0)
 
 # Download images and labels into mnist.test (10K images+labels) and mnist.train (60K images+labels)
+<<<<<<< HEAD
 # mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
 noise_var = 64
 iteration = 10000
 mnist = read_h5_data('data/noisy_mnist_sigma_%d.hdf5'%noise_var, reshape=False)
+=======
+mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
+>>>>>>> refs/remotes/origin/master
 
 
 # neural network structure for this sample:
@@ -152,15 +162,20 @@ def training_step(i, update_test_data, update_train_data):
     # the backpropagation training step
     sess.run(train_step, {X: batch_X, Y_: batch_Y, lr: learning_rate})
 
+<<<<<<< HEAD
 
 movie_name = 'movies/mnist-noise-%d-pd-iter-%d.mp4' % (noise_var, iteration)
 datavis.animate(training_step, iteration+1, train_data_update_freq=10, test_data_update_freq=100, save_movie=movie_name)
+=======
+datavis.animate(training_step, 5001, train_data_update_freq=10, test_data_update_freq=100)
+>>>>>>> refs/remotes/origin/master
 
 # to save the animation as a movie, add save_movie=True as an argument to datavis.animate
 # to disable the visualisation use the following line instead of the datavis.animate line
 # for i in range(10000+1): training_step(i, i % 100 == 0, i % 20 == 0)
 
 print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
+<<<<<<< HEAD
 text_file = open("max_accuracy.txt", "a")
 text_file.write("Video:%s; max accuracy:%s" % (movie_name, str(datavis.get_max_test_accuracy())))
 text_file.close()
@@ -168,3 +183,16 @@ text_file.close()
 
 # layers 4 8 12 200, patches 5x5str1 5x5str2 4x4str2 best 0.989 after 10000 iterations
 # layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 best 0.9892 after 10000 iterations
+=======
+
+# layers 4 8 12 200, patches 5x5str1 5x5str2 4x4str2 best 0.989 after 10000 iterations
+# layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 best 0.9892 after 10000 iterations
+# layers 6 12 24 200, patches 5x5str1 4x4str2 4x4str2 best 0.9908 after 10000 iterations but going downhill from 5000 on
+# layers 6 12 24 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75 best 0.9922 after 10000 iterations (but above 0.99 after 1400 iterations only)
+# layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9914 at 13700 iterations
+# layers 9 16 25 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9918 at 10500 (but 0.99 at 1500 iterations already, 0.9915 at 5800)
+# layers 9 16 25 300, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9916 at 5500 iterations (but 0.9903 at 1200 iterations already)
+# attempts with 2 fully-connected layers: no better 300 and 100 neurons, dropout 0.75 and 0.5, 6x6 5x5 4x4 patches no better
+#*layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 dropout=0.75 best 0.9928 after 12800 iterations (but consistently above 0.99 after 1300 iterations only, 0.9916 at 2300 iterations, 0.9921 at 5600, 0.9925 at 20000)
+# layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 no dropout best 0.9906 after 3100 iterations (avove 0.99 from iteration 1400)
+>>>>>>> refs/remotes/origin/master
