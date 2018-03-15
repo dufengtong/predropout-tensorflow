@@ -21,7 +21,7 @@ def read_h5_data(h5_path, reshape=False):
     '''
     an alternative version of tensorflow.examples.tutorials.mnist.inputdata.read_data_sets()
     h5_path: path of the noisy mnist dataset h5 file
-    return tensorflow Dataset instance, can be used with 
+    return tensorflow Dataset instance, can be used with
     batch_X, batch_Y = noisy_mnist.train.next_batch(100)
     '''
 
