@@ -17,25 +17,23 @@ import tensorflow as tf
 import tensorflowvisu
 import math
 from tensorflow.examples.tutorials.mnist import input_data as mnist_data
-<<<<<<< HEAD
 from generate_noise_mnist import read_h5_data
 
 
-=======
->>>>>>> refs/remotes/origin/master
+
 print("Tensorflow version " + tf.__version__)
 tf.set_random_seed(0)
 
 # Download images and labels into mnist.test (10K images+labels) and mnist.train (60K images+labels)
-<<<<<<< HEAD
+
 # mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
 noise_var = 64
 iteration = 10000
 dropout_rate = 0.75
-mnist = read_h5_data('data/noisy_mnist_sigma_%d.hdf5'%noise_var, reshape=False)
-=======
+# mnist = read_h5_data('data/noisy_mnist_sigma_%d.hdf5'%noise_var, reshape=False)
+
 mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
->>>>>>> refs/remotes/origin/master
+
 
 # neural network structure for this sample:
 #
@@ -57,12 +55,9 @@ X = tf.placeholder(tf.float32, [None, 28, 28, 1])
 Y_ = tf.placeholder(tf.float32, [None, 10])
 # variable learning rate
 lr = tf.placeholder(tf.float32)
-<<<<<<< HEAD
+
 # Probability of keeping a node during dropout = 1.0 at test time (no dropout) and 0.75 at training time
 pkeep = tf.placeholder(tf.float32)
-
-=======
->>>>>>> refs/remotes/origin/master
 
 # three convolutional layers with their channel counts, and a
 # fully connected layer (tha last layer has 10 softmax neurons)
@@ -95,12 +90,9 @@ Y3 = tf.nn.relu(tf.nn.conv2d(Y2, W3, strides=[1, stride, stride, 1], padding='SA
 YY = tf.reshape(Y3, shape=[-1, 7 * 7 * M])
 
 Y4 = tf.nn.relu(tf.matmul(YY, W4) + B4)
-<<<<<<< HEAD
+
 YY4 = tf.nn.dropout(Y4, pkeep)
 Ylogits = tf.matmul(YY4, W5) + B5
-=======
-Ylogits = tf.matmul(Y4, W5) + B5
->>>>>>> refs/remotes/origin/master
 Y = tf.nn.softmax(Ylogits)
 
 # cross-entropy loss function (= -sum(Y_i * log(Yi)) ), normalised for batches of 100  images
@@ -138,19 +130,18 @@ def training_step(i, update_test_data, update_train_data):
     max_learning_rate = 0.003
     min_learning_rate = 0.0001
     decay_speed = 2000.0
-<<<<<<< HEAD
+
     learning_rate = min_learning_rate + (max_learning_rate - min_learning_rate) * math.exp(-i / decay_speed)
 
     # compute training values for visualisation
     if update_train_data:
         a, c, im, w, b = sess.run([accuracy, cross_entropy, I, allweights, allbiases], {X: batch_X, Y_: batch_Y, pkeep: 1.0})
-=======
+
     learning_rate = min_learning_rate + (max_learning_rate - min_learning_rate) * math.exp(-i/decay_speed)
 
     # compute training values for visualisation
     if update_train_data:
         a, c, im, w, b = sess.run([accuracy, cross_entropy, I, allweights, allbiases], {X: batch_X, Y_: batch_Y})
->>>>>>> refs/remotes/origin/master
         print(str(i) + ": accuracy:" + str(a) + " loss: " + str(c) + " (lr:" + str(learning_rate) + ")")
         datavis.append_training_curves_data(i, a, c)
         datavis.update_image1(im)
@@ -158,20 +149,16 @@ def training_step(i, update_test_data, update_train_data):
 
     # compute test values for visualisation
     if update_test_data:
-<<<<<<< HEAD
         a, c, im = sess.run([accuracy, cross_entropy, It], {X: mnist.test.images, Y_: mnist.test.labels, pkeep: 1.0})
         print(str(i) + ": ********* epoch " + str(
             i * 100 // mnist.train.images.shape[0] + 1) + " ********* test accuracy:" + str(
             a) + " test loss: " + str(c))
-=======
         a, c, im = sess.run([accuracy, cross_entropy, It], {X: mnist.test.images, Y_: mnist.test.labels})
         print(str(i) + ": ********* epoch " + str(i*100//mnist.train.images.shape[0]+1) + " ********* test accuracy:" + str(a) + " test loss: " + str(c))
->>>>>>> refs/remotes/origin/master
         datavis.append_test_curves_data(i, a, c)
         datavis.update_image2(im)
 
     # the backpropagation training step
-<<<<<<< HEAD
     sess.run(train_step, {X: batch_X, Y_: batch_Y, lr: learning_rate, pkeep: dropout_rate})
 
 
@@ -186,16 +173,11 @@ text_file.close()
 # no noise,  best 0.9892 after 10000 iterations
 # noise var=32, best 0.9812 after 10000 iterations
 # noise var=32, best 0.9805 after 10000 iterations
-=======
-    sess.run(train_step, {X: batch_X, Y_: batch_Y, lr: learning_rate})
-
-datavis.animate(training_step, 5001, train_data_update_freq=10, test_data_update_freq=100)
 
 # to save the animation as a movie, add save_movie=True as an argument to datavis.animate
 # to disable the visualisation use the following line instead of the datavis.animate line
 # for i in range(10000+1): training_step(i, i % 100 == 0, i % 20 == 0)
 
-print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
 
 # layers 4 8 12 200, patches 5x5str1 5x5str2 4x4str2 best 0.989 after 10000 iterations
 # layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 best 0.9892 after 10000 iterations
@@ -207,4 +189,3 @@ print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
 # attempts with 2 fully-connected layers: no better 300 and 100 neurons, dropout 0.75 and 0.5, 6x6 5x5 4x4 patches no better
 #*layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 dropout=0.75 best 0.9928 after 12800 iterations (but consistently above 0.99 after 1300 iterations only, 0.9916 at 2300 iterations, 0.9921 at 5600, 0.9925 at 20000)
 # layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 no dropout best 0.9906 after 3100 iterations (avove 0.99 from iteration 1400)
->>>>>>> refs/remotes/origin/master
