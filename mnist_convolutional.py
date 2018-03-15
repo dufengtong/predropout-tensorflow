@@ -151,7 +151,7 @@ movie_name = 'movies/mnist-noise-%d-dropout-%.2f-iter-%d.mp4' % (noise_var, drop
 datavis.animate(training_step, iteration+1, train_data_update_freq=10, test_data_update_freq=100, save_movie=movie_name)
 
 print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
-text_file = open("max_accuracy.txt", "w")
+text_file = open("max_accuracy.txt", "a")
 text_file.write("Video:%s; max accuracy:%s" % (movie_name, str(datavis.get_max_test_accuracy())))
 text_file.close()
 

@@ -161,7 +161,7 @@ datavis.animate(training_step, iteration+1, train_data_update_freq=10, test_data
 # for i in range(10000+1): training_step(i, i % 100 == 0, i % 20 == 0)
 
 print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
-text_file = open("max_accuracy.txt", "w")
+text_file = open("max_accuracy.txt", "a")
 text_file.write("Video:%s; max accuracy:%s" % (movie_name, str(datavis.get_max_test_accuracy())))
 text_file.close()
 
