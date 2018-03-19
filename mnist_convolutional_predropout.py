@@ -30,8 +30,9 @@ tf.set_random_seed(0)
 # mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
 noise_var = 64
 iteration = 10000
-# mnist = read_h5_data('data/noisy_mnist_sigma_%d.hdf5'%noise_var, reshape=False)
-mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
+code_num = 100
+mnist = read_h5_data('data/noisy_mnist_sigma_%d.hdf5'%noise_var, reshape=False)
+# mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validation_size=0)
 
 
 # neural network structure for this sample:
@@ -53,10 +54,10 @@ mnist = mnist_data.read_data_sets("data", one_hot=True, reshape=False, validatio
 K = 4  # first convolutional layer output depth
 L = 8  # second convolutional layer output depth
 M = 12  # third convolutional layer
-N = 40  # fully connected layer
+N = 200  # fully connected layer
 batch_size = 100
 # load mask vectors with dimension [class_num, N]
-with open('feature_vectors/fv_10_4_40_0.pickle', 'rb') as f:
+with open('feature_vectors/fv_10_%d_%d_50.pickle'%(code_num, N), 'rb') as f:
     masks = pickle.load(f)
 
 # input X: 28x28 grayscale images, the first dimension (None) will index the images in the mini-batch
@@ -158,10 +159,8 @@ def training_step(i, update_test_data, update_train_data):
 
 
 
-movie_name = 'movies/mnist-noise-%d-pd-iter-%d.mp4' % (noise_var, iteration)
+movie_name = 'movies/mnist-noise-%d-pd-iter-%d-fv-%d-%d.mp4' % (noise_var, iteration, N, code_num)
 datavis.animate(training_step, iteration+1, train_data_update_freq=10, test_data_update_freq=100, save_movie=movie_name)
-
-datavis.animate(training_step, 5001, train_data_update_freq=10, test_data_update_freq=100)
 
 
 # to save the animation as a movie, add save_movie=True as an argument to datavis.animate
@@ -171,16 +170,23 @@ datavis.animate(training_step, 5001, train_data_update_freq=10, test_data_update
 print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
 
 text_file = open("max_accuracy.txt", "a")
-text_file.write("Video:%s; max accuracy:%s" % (movie_name, str(datavis.get_max_test_accuracy())))
+text_file.write("Video:%s; max accuracy:%s\n" % (movie_name, str(datavis.get_max_test_accuracy())))
 text_file.close()
 
-# layers 4 8 12 200, patches 5x5str1 5x5str2 4x4str2 best 0.989 after 10000 iterations
-# layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 best 0.9892 after 10000 iterations
-# layers 6 12 24 200, patches 5x5str1 4x4str2 4x4str2 best 0.9908 after 10000 iterations but going downhill from 5000 on
-# layers 6 12 24 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75 best 0.9922 after 10000 iterations (but above 0.99 after 1400 iterations only)
-# layers 4 8 12 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9914 at 13700 iterations
-# layers 9 16 25 200, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9918 at 10500 (but 0.99 at 1500 iterations already, 0.9915 at 5800)
-# layers 9 16 25 300, patches 5x5str1 4x4str2 4x4str2 dropout=0.75, best 0.9916 at 5500 iterations (but 0.9903 at 1200 iterations already)
-# attempts with 2 fully-connected layers: no better 300 and 100 neurons, dropout 0.75 and 0.5, 6x6 5x5 4x4 patches no better
-#*layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 dropout=0.75 best 0.9928 after 12800 iterations (but consistently above 0.99 after 1300 iterations only, 0.9916 at 2300 iterations, 0.9921 at 5600, 0.9925 at 20000)
-# layers 6 12 24 200, patches 6x6str1 5x5str2 4x4str2 no dropout best 0.9906 after 3100 iterations (avove 0.99 from iteration 1400)
+# layers 4 8 12 200, best 0.989 after 10000 iterations
+# layers 4 8 12 200, best 0.9892 after 10000 iterations
+# layers 4 8 12 200, concept encoding number 20, noise 64, max accuracy: 0.9535
+# layers 4 8 12 200, concept encoding number 40, noise 0, max accuracy: 0.9895
+# layers 4 8 12 200, concept encoding number 100, noise 0, max accuracy: 0.9907
+# layers 4 8 12 200, concept encoding number 100, noise 64, max accuracy: 0.9565
+# layers 4 8 12 200, concept encoding number 150, noise 0, max accuracy: 0.9905
+# layers 4 8 12 200, concept encoding number 150, noise 64, max accuracy: 0.9637
+# layers 4 8 12 40, concept encoding number 10, random fv max overlap 5, noise 0, max accuracy: 0.9863
+# layers 4 8 12 40, concept encoding number 20, random fv max overlap 10, noise 0, max accuracy: 0.988
+# layers 4 8 12 40, concept encoding number 20, random fv max overlap 10, noise 64, max accuracy: 0.9549
+# layers 4 8 12 200, concept encoding number 100, random fv max overlap 120, noise 0, max accuracy: 0.9909
+# layers 4 8 12 200, concept encoding number 100, random fv max overlap 120, noise 64, max accuracy: 0.9678
+# layers 4 8 12 64, concept encoding number 10, share 4, max overlap 4, noise 0, max accuracy: 0.9886
+
+# layers 4 8 12 200, concept encoding number 100, random fv max overlap 50, noise 64, max accuracy: 0.9764
+# layers 4 8 12 200, concept encoding number 100, random fv max overlap 50, noise 0, max accuracy: 0.9911

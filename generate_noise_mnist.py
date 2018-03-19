@@ -99,4 +99,4 @@ def create_noisy_mnist(sigma, save_dir):
 
 if __name__ == '__main__':
     dir = 'D:\dft\program\predropout-tensorflow\data'
-    create_noisy_mnist(64, dir)
+    create_noisy_mnist(0, dir)

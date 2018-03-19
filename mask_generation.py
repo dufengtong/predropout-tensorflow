@@ -5,7 +5,7 @@ import pickle
 def nCr(n, r):
     '''number of combinations when choosing r from n'''
     f = math.factorial
-    return f(n) / f(r) / f(n-r)
+    return f(n) // f(r) // f(n-r)
 
 def unique_rows(a):
     '''remove same rows with same order'''
@@ -13,7 +13,7 @@ def unique_rows(a):
     unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
     return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
-def generate_fake_fvs(v_num, v_len, code_num, max_overlap=None):
+def generate_random_fake_fvs(v_num, v_len, code_num, max_overlap=None):
     """
     :param v_num: number of fvs need to generated.(number of concept classes.)
     :param v_len: number of neurons encoding all the concept.
@@ -39,14 +39,37 @@ def generate_fake_fvs(v_num, v_len, code_num, max_overlap=None):
             fv_num += 1
 
     print('Generate %d features with %d neuron per concept done!' % (len(fvs), code_num))
-    return fvs
+    return fvs, max_overlap
+
+def generate_fake_fvs(v_num, v_len, code_num):
+    fvs = np.zeros([v_num, v_len])
+
+    overlap = int((v_num*code_num - v_len) / (v_num - 1))
+    for i in range(v_num):
+        fv = np.zeros(v_len)
+        one_start_idx = (code_num - overlap) * i
+        fv[one_start_idx:one_start_idx+code_num] = 1
+        fvs[i] = fv
+    return fvs, overlap
+
+def generate_share_neuron_fvs(c, o, m):
+    n = c * (m - o) + o # vector length when c vectors share o neurons
+    fvs = np.ones([c, n])
+    print(c, n-o, m-o)
+    indepent_fvs,_ = generate_fake_fvs(c, n-o, m-o)
+    fvs[:, o:] = indepent_fvs
+    return fvs, n
+
 
 if __name__=='__main__':
     class_num = 10
-    concept_coding_num = 4
+    concept_coding_num = 20
     vector_len = 40
-    overlap = 0
-    fvs = generate_fake_fvs(v_num=class_num, v_len=vector_len, code_num=concept_coding_num, max_overlap=overlap)
+    overlap = None
+    fvs, overlap = generate_random_fake_fvs(v_num=class_num, v_len=vector_len, code_num=concept_coding_num, max_overlap=overlap)
+    # fvs, overlap = generate_fake_fvs(class_num, vector_len, concept_coding_num)
+    # fvs, vector_len = generate_share_neuron_fvs(class_num, overlap, concept_coding_num)
+    print(fvs)
     pickle_name = 'feature_vectors/fv_%d_%d_%d_%d.pickle' % (class_num, concept_coding_num, vector_len, overlap)
     with open(pickle_name, 'wb') as f:
         pickle.dump(fvs, f)
