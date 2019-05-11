@@ -52,4 +52,3 @@ ytick.major.pad: 5
 #ytick.labelsize: medium
 #legend.fontsize: medium
 #axes.prop_cycle: cycler('color', ['4444FF', 'FF3333', '22AA22']) + cycler('linewidth',[0.7, 2, 0.7])
-
